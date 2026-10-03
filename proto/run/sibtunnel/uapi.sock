@@ -1,0 +1,4 @@
+→ {"id":1,"op":"set_peer","peer":{"public_key":"IqDS…Gw=","tunnel_ip":"10.77.0.2","rate_limit_mbps":50}}
+← {"id":1,"ok":true}
+→ {"id":2,"op":"list_peers"}
+← {"id":2,"ok":true,"peers":[{"public_key":"IqDS…Gw=","tunnel_ip":"10.77.0.2","rate_limit_mbps":50,"endpoint":"192.0.2.2:40502","last_handshake_unix":1790588394,"rx_bytes":504,"tx_bytes":504}]}
