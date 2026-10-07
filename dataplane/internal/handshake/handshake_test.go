@@ -1,3 +1,5 @@
+package handshake
+
 import (
 	"bytes"
 	"testing"
