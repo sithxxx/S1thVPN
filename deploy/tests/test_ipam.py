@@ -1,6 +1,6 @@
 from ipaddress import IPv4Address
 import pytest 
-from sibco.ipam import IPAM, IPAMExhauted
+from sibcp.ipam import IPAM, IPAMExhauted
 
 def test_allocates_lowest_free():
     ipam = IPAM("10.77.0.0/22")
