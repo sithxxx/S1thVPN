@@ -1,0 +1,46 @@
+x-host: &host 
+  network_mode: host 
+  restart: unless-stopped 
+
+services:
+  postgres: 
+    <<: *host
+    image: postgres:16
+    command: ["postgres", "-c", "listen_addresses=127.0.0.1"]
+    environment:
+      POSTGRES_USER: sibcp 
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:}
+      POSTGRES_DB: sibcp 
+    volumes: [pgdata:/var/lib/postgresql/data]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -h 127.0.0.1 -U sibcp"]
+      interval: 5s 
+      retries: 10 
+    sibcp:
+      <<: *host 
+      build :  ../../controlplane
+      env_file: .env
+      environment:
+        SIBCP_DATABASE_URL: postgresql+asyncpg://sibcp:${POSTGRES_PASSWORD}@127.0.0.1:5432/sibcp
+        SIBCP_UAPI_SOCKET: /run/sibtunnel/uapi.sock
+      volumes: ["/run/sibtunnel:/run/sibtunnel"]
+      group_add: ["${SIBTUNNEL_GID:?впишите id -g sibtunnel}"]
+      depends_on:
+        postgres: {condition: service_healthy}
+    caddy:
+      <<: *host
+      image: caddy:2
+      volumes: ["./Caddyfile:/etc/caddy/Caddyfile:ro", "caddy_data:/data"]
+    prometheus:
+      <<: *host
+      image: prom/prometheus:latest
+      command: ["--config.file=/etc/prometheus/prometheus.yml", "--web.listenaddress=127.0.0.1:9090"]
+      volumes: ["./prometheus.yml:/etc/prometheus/prometheus.yml:ro", "promdata:/prometheus"]
+    grafana:
+      <<: *host
+      image: grafana/grafana:latest
+      environment:
+        GF_SERVER_HTTP_ADDR: 127.0.0.1
+      volumes: ["grafanadata:/var/lib/grafana"]
+
+volumes: {pgdata: {}, caddy_data: {}, promdata: {}, grafanadata: {}}

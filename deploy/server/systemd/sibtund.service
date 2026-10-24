@@ -1,0 +1,21 @@
+[Unit]
+Description=SibTunnel data plane
+After=network-online.target nftables.service
+Wants=network-online.target
+[Service]
+User=sibtunnel
+Group=sibtunnel
+ExecStart=/usr/local/bin/sibtund -config /etc/sibtunnel/server.toml
+Restart=always
+RestartSec=2
+RuntimeDirectory=sibtunnel
+RuntimeDirectoryMode=0750
+AmbientCapabilities=CAP_NET_ADMIN
+CapabilityBoundingSet=CAP_NET_ADMIN
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+LimitNOFILE=65535
+[Install]
+WantedBy=multi-user.target
