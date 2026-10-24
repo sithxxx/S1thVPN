@@ -1,0 +1,11 @@
+vpn.example.org {
+    handle /i/* {
+        reserve_proxy 127.0.0.1:8000
+    }
+    handle /static/* {
+    reserve _proxy 127.0.0.1:8000
+    }
+    handle {
+        respond "Not found" 404
+    }
+}
