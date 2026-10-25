@@ -40,4 +40,5 @@ def create_app(settings: Settings | None = None, driver: DataplaneDriver | None 
     return app
 
 def app() -> FastAPI:
+    app.mount("/metrics", metrics_app)
     return create_app()

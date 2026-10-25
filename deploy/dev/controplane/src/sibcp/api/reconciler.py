@@ -57,3 +57,15 @@ class Reconciler:
             except TimeoutError:
                 pass
             self._wake.clear()
+            try:
+                desired = await self._load()
+                metrics.PEERS_DESIRED.set(len(desired))
+                res = await reconcile_once(desired, self._driver)
+                metrics.RECONCILE_RUNS.inc()
+                for kind in ("added", "updated", "removed"):
+                    
+metrics.RECONCILE_CHANGES.labels(kind).inc(len(getattr(res, kind)))
+                ...
+            except Exception:
+                metrics.RECONCILE_ERRORS.inc()
+                log.exception("reconcile failed")
